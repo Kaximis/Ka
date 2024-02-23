@@ -1,0 +1,60 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<bits/stdc++.h>
+using namespace std;
+const double eps = 1e-6; // eps是精度，表示误差范围；1e-6表示科学计数法，即10的负6次方(即10^-6)，也就是0.000001
+    // eps是预设的误差值，可以理解为我们要求解的 x 值与真实解之间的最大允许误差。
+int Degree; // Degree用于存储函数的阶数
+double Coefficients[15]; // 个双精度浮点型数组Coefficients用于存储函数的各项系数
+double f(double x) // 函数f用于计算函数在给定点 x 处的函数值
+{      
+    double s = 0; // s用于存储函数值
+    for (int i = Degree; i >= 0; i--) // 循环计算函数值  
+    {
+        s = s * x + Coefficients[i]; // 计算函数值的过程  
+    }
+    return s;  // 返回计算得到的函数值，类型为double
+}
+int main() // 主函数入口
+{
+    double L, R; // L和R用于表示区间范围  
+    scanf("%d%lf%lf", &Degree, &L, &R); // 输入函数的阶数与区间范围
+    for (int i = Degree; i >= 0; i--) // 循环读取函数的系数
+    {
+        scanf("%lf", &Coefficients[i]); // 读取函数的各项系数
+    }
+    while(R-L > eps) // for(int i = 0; i<100; i++){ //用for也行
+        /*while(R-L > eps)表示当区间长度只要仍大于预设的误差值eps时，就一直执行循环体内的代码，不断缩小搜索区间直到满足条件的 x 值被找到为止。
+        在这段代码中，由于 R 和 L 表示区间的右端点和左端点，因此 R - L 表示区间的长度。
+        ★eps是预设的误差值，可以理解为我们要求解的 x 值与真实解之间的最大允许误差。
+        ★当搜索区间长度小于误差值 eps 时，我们认为已经找到了满足条件的 x 值，才可以终止while循环停止搜索。*/
+    {       
+        double k = (R - L) / 3.0; // 将区间等分为三份，每份的长度为k
+        double mid1 = L + k, mid2 = R - k; // 计算两个中点mid1与mid2的位置
+        if (f(mid1) > f(mid2)) // 如果中点mid1处的函数值大于中点mid2处的函数值
+        {
+            R = mid2; // 则说明函数在区间[L, mid2]上单调增，在区间[mid2, R]上单调减，因此更新右端点R为mid2
+        }
+        else  
+        {
+            L = mid1; // 否则更新左端点L为 mid1
+        }
+        // 通过这个if就能不断缩小搜索范围，直到满足条件的x值
+    }
+    printf("%.5f\n", L); // 输出最终计算得到的x值，保留五位小数
+    return 0;
+}
+/*
+样例输入
+3 -0.9981 0.5
+1 -3 -3 1
+样例输出
+-0.41421
+*/
+/*
+解释：
+样例输入
+3 -0.9981 0.5 （分别是N、l、r，代表N次函数与范围[l, r]，代码里的N用Degree表示）
+1 -3 -3 1 （表示该 N 次函数各项的系数，这里是f(x) = x^3 - 3 x^2 - 3x + 1）
+样例输出
+-0.41421 （x的值，当x=-0.41421时图像位于最高点，故此时函数在[l, x]上单调增，在[x, r]上单调减，故输出x=-0.41421）
+*/
